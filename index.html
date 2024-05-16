@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>돌맹이 강화하기</title>
+    <style>
+        body {
+            background-color: #dddddd; /* 어두운 회색 */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #result {
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #successRate {
+            font-weight: bold;
+            color: green;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>돌맹이 강화하기</h1>
+    <p>강화에 도전해보세요!</p>
+    <button onclick="enhanceRock()">강화하기</button>
+    <div id="result"></div>
+    <button onclick="sellRock()">돌맹이 판매하기</button>
+    <p id="goldAmount">현재 골드: 0</p>
+    <p id="successRate">성공 확률: 90%</p>
+
+    <script>
+        let rockLevel = 0; // 돌맹이의 기본 레벨은 0
+        let gold = 0;
+        let baseSuccessRate = 0.9; // 초기 성공 확률
+
+        function enhanceRock() {
+            const resultDiv = document.getElementById('result');
+            
+            if (Math.random() < baseSuccessRate) {
+                rockLevel += 1; // 돌맹이 레벨을 1씩 증가
+                resultDiv.innerHTML = `<p style="color: green;">강화 성공! 돌맹이 레벨: ${rockLevel}</p>`;
+                showGlow(); // 강화 성공 시 후광 보이기
+            } else {
+                rockLevel -= 1; // 실패 시 레벨 감소
+                if (rockLevel < 0) {
+                    rockLevel = 0; // 레벨이 0보다 작아지지 않도록 보정
+                }
+                resultDiv.innerHTML = `<p style="color: red;">강화 실패! 돌맹이 레벨: ${rockLevel}</p>`;
+            }
+
+            updateSuccessRate();
+        }
+
+        function showGlow() {
+            const glow = document.getElementById('glow');
+            glow.style.opacity = '1';
+            setTimeout(() => {
+                glow.style.opacity = '0';
+            }, 500); // 0.5초 후에 후광을 다시 숨김
+        }
+
+        function calculateSuccessRate() {
+            const decreaseRate = rockLevel * 0.02; // 돌맹이 레벨에 따른 확률 감소량
+            let successRate = baseSuccessRate - decreaseRate; // 최종 성공 확률
+
+            // 확률이 음수가 되지 않도록 보정
+            if (successRate < 0) {
+                successRate = 0;
+            }
+
+            return successRate;
+        }
+
+        function updateSuccessRate() {
+            baseSuccessRate = calculateSuccessRate();
+            const successRateElement = document.getElementById('successRate');
+            successRateElement.textContent = `성공 확률: ${(baseSuccessRate * 100).toFixed(1)}%`;
+        }
+
+        function sellRock() {
+            const rockPrice = rockLevel * 10; // 돌맹이 레벨에 해당하는 가격
+            gold += rockPrice; // 골드 획득
+            rockLevel = 0; // 돌맹이 레벨 초기화
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<p style="color: blue;">돌맹이 판매 성공! ${rockPrice} 골드를 획득하였습니다.</p>`;
+
+            const goldAmount = document.getElementById('goldAmount');
+            goldAmount.textContent = `현재 골드: ${gold}`; // 현재 골드 업데이트
+        }
+    </script>
+</body>
+</html>
